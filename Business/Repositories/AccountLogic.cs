@@ -32,6 +32,16 @@ namespace Business.Repositories
             {
                 var user = _mapper.Map<User>(mLogin);
                 var token = await _service.LoginAsync(user);
+
+                var contentEmail = $"OTP : {token}";
+
+                // send
+                await _emailSender.SendEmailAsync(
+                    mLogin.Email,
+                    "your OTP.",
+                    contentEmail
+                );
+
             }
             catch (Exception ex)
             {
@@ -110,5 +120,18 @@ namespace Business.Repositories
                 throw ex;
             }
         }
+
+        public async Task ConfirmEmail(string token, string email)
+        {
+            try
+            {
+                await _service.ConfirmEmailAsync(token, email);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }

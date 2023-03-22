@@ -7,5 +7,7 @@ namespace Data.Services.Interfaces
         Task<String> RegisterAsync(User eUser);
         Task<String> LoginAsync(User user);
         Task<Object> LoginStepTwo(string twoFactorCode, string email);
+        Task ConfirmEmailAsync(string token, string email);
+
     }
 }

@@ -6,7 +6,8 @@ namespace Data.Services
 {
     public class AccountService : IAccountService
     {
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountService(UserManager<User> userManager,
+                            SignInManager<User> signInManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -107,6 +108,27 @@ namespace Data.Services
             catch (Exception ex)
             {
                 throw new Exception($"Failed to register {ex.Message}");
+            }
+        }
+        public async Task ConfirmEmailAsync(string token, string email)
+        {
+            try
+            {
+                var eUser = await _userManager.FindByEmailAsync(email);
+                if (eUser == null)
+                {
+                    throw new Exception("User does not exist");
+                }
+                var result = await _userManager.ConfirmEmailAsync(eUser, token);
+                var status = result.Succeeded
+                    ? "Thank you for confirming your mail"
+                    : "Your email is not confirmed, please try again later.";
+
+                throw new Exception(status);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }
