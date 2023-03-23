@@ -9,7 +9,6 @@ namespace Business_Logic_Layer.Configuration
         public MappingProfile()
         {
             // auth
-
             CreateMap<RegistrationModel, User>()
                .ForMember(u => u.UserName, opt => opt.MapFrom(x => x.Email))
                .ForMember(u => u.PasswordHash, opt => opt.MapFrom(x => x.Password));
@@ -18,6 +17,7 @@ namespace Business_Logic_Layer.Configuration
 
             // employee
             CreateMap<Employee, EmployeeModel>().ReverseMap();
+            CreateMap<Department, DepartmentModel>();
         }
     }
 }

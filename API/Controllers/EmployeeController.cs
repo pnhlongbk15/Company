@@ -15,11 +15,11 @@ namespace API.Controllers
         private readonly ILogic<EmployeeModel> _logicBusiness;
 
         [HttpGet]
-        public IActionResult GetAllEmployee()
+        public async Task<IActionResult> GetAllEmployee()
         {
             try
             {
-                var aEmployee = _logicBusiness.GetAll();
+                var aEmployee = await _logicBusiness.GetAll();
                 return Ok(aEmployee);
             }
             catch (Exception ex)
@@ -29,11 +29,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetEmployeeById(string id)
+        public async Task<IActionResult> GetEmployeeById(string id)
         {
             try
             {
-                var mEmployee = _logicBusiness.GetOneById(id);
+                var mEmployee = await _logicBusiness.GetOneById(id);
                 return Ok(mEmployee);
             }
             catch (Exception ex)

@@ -16,11 +16,11 @@ namespace Business.Repositories
         private IEntityService<Employee> _service;
         private IMapper _mapper;
 
-        public IEnumerable<EmployeeModel> GetAll()
+        public async Task<IEnumerable<EmployeeModel>> GetAll()
         {
             try
             {
-                var aEmployeee = _service.GetAll();
+                var aEmployeee = await _service.GetAll();
                 return _mapper.Map<IEnumerable<EmployeeModel>>(aEmployeee);
             }
             catch (Exception ex)
@@ -29,11 +29,11 @@ namespace Business.Repositories
             }
         }
 
-        public EmployeeModel GetOneById(string id)
+        public async Task<EmployeeModel> GetOneById(string id)
         {
             try
             {
-                var eEmployee = _service.GetOneById(id);
+                var eEmployee = await _service.GetOneById(id);
                 if (eEmployee == null)
                 {
                     throw new Exception("Invalid Id");
@@ -78,11 +78,11 @@ namespace Business.Repositories
             }
         }
 
-        public void UpdateOne(string id, EmployeeModel model)
+        public async void UpdateOne(string id, EmployeeModel model)
         {
             try
             {
-                var eEmployee = _service.GetOneById(id);
+                var eEmployee = await _service.GetOneById(id);
                 if (eEmployee == null)
                 {
                     throw new Exception("The Employee record couldn't be found.");

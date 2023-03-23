@@ -14,7 +14,7 @@ namespace Data.Services
 
         private readonly CompanyContext _context;
 
-        public IEnumerable<Employee> GetAll()
+        public async Task<IEnumerable<Employee>> GetAll()
         {
             try
             {
@@ -23,7 +23,7 @@ namespace Data.Services
             catch (Exception ex) { throw ex; }
         }
 
-        public Employee GetOneById(string id)
+        public async Task<Employee> GetOneById(string id)
         {
             try
             {

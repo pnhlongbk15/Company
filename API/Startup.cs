@@ -43,10 +43,12 @@ namespace API
             });
 
             // DA
-            services.AddTransient<IEntityService<Employee>, EmployeeService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IEntityService<Department>, DepartmentService>();
+            services.AddTransient<IEntityService<Employee>, EmployeeService>();
             // BL
             services.AddTransient<IAccountLogic, AccountLogic>();
+            services.AddTransient<ILogic<DepartmentModel>, DepartmentLogic>();
             services.AddTransient<ILogic<EmployeeModel>, EmployeeLogic>();
 
             services.AddMemoryCache(setup =>
@@ -144,6 +146,8 @@ namespace API
 
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailService>();
+
+            // Dapper
 
         }
 
