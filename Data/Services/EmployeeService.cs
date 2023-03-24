@@ -32,7 +32,7 @@ namespace Data.Services
             catch (Exception ex) { throw ex; }
         }
 
-        public void AddOne(Employee entity)
+        public async Task AddOne(Employee entity)
         {
             try
             {
@@ -45,11 +45,12 @@ namespace Data.Services
                 throw ex;
             }
         }
-        public void UpdateOne(Employee mEntity, Employee entity)
+        public async Task UpdateOne(Employee entity)
         {
             try
             {
-                _context.Entry(mEntity).CurrentValues.SetValues(entity);
+                //_context.Employees.Entry(mEntity).CurrentValues.SetValues(entity);
+                _context.Employees.Update(entity);
                 _context.SaveChanges();
             }
             catch (Exception ex)
@@ -57,7 +58,7 @@ namespace Data.Services
                 throw ex;
             }
         }
-        public void DeleteOne(Employee entity)
+        public async Task DeleteOne(Employee entity)
         {
             try
             {

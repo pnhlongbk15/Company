@@ -14,7 +14,7 @@ namespace Data.Domain
         }
 
         public DbSet<Employee> Employees { get; set; }
-        //public DbSet<Department> Departments { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -62,6 +62,35 @@ namespace Data.Domain
                 DateOfBirth = new DateTime(1981, 07, 13),
                 PhoneNumber = "111-222-3333",
                 DepartmentId = Id2,
+            });
+
+            modelBuilder.Entity<Employee>().InsertUsingStoredProcedure("Employees_Insert", buildAction =>
+            {
+
+
+            });
+            modelBuilder.Entity<Employee>(buildEntity =>
+            {
+                buildEntity.InsertUsingStoredProcedure("Employees_Insert", buildAction =>
+                {
+                    buildAction.HasParameter("Id")
+                            .HasParameter("FirstName")
+                            .HasParameter("LastName")
+                            .HasParameter("DateOfBirth")
+                            .HasParameter("PhoneNumber")
+                            .HasParameter("Email")
+                            .HasParameter("DepartmentId", b => b.HasName("DepartmentName"));
+                });
+                buildEntity.UpdateUsingStoredProcedure("Employees_Update", buildAction =>
+                {
+                    buildAction.HasOriginalValueParameter("Id")
+                            .HasParameter("FirstName")
+                            .HasParameter("LastName")
+                            .HasParameter("DateOfBirth")
+                            .HasParameter("PhoneNumber")
+                            .HasParameter("Email")
+                            .HasParameter("DepartmentId", b => b.HasName("DepartmentName"));
+                });
             });
         }
     }

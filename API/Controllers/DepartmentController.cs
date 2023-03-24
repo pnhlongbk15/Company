@@ -1,9 +1,6 @@
 ﻿using Business.Models;
 using Business.Repositories.Interfaces;
-using Dapper;
-using Data.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace API.Controllers
 {
@@ -22,8 +19,8 @@ namespace API.Controllers
         {
             try
             {
-                var aEmployee = await _logicBusiness.GetAll();
-                return Ok(aEmployee);
+                var aDepartments = await _logicBusiness.GetAll();
+                return Ok(aDepartments);
             }
             catch (Exception ex)
             {
@@ -31,26 +28,55 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDepartmentById(string id)
         {
             try
             {
-                using (var connection = new SqlConnection("Data Source=LAPTOP-QD1OPRSA\\SQLEXPRESS;Integrated Security=true;Initial Catalog=Company;TrustServerCertificate=True;Encrypt=False"))
-                {
-                    Console.WriteLine(connection.ConnectionString);
-                    var sql = @"SELECT Name,e.Id, e.FirstName, e.LastName, e.Email 
-                        FROM Departments as d
-                        INNER JOIN Employees as e
-                        ON e.DepartmentId = d.Id";
-                    var result = connection.Query<Department, Employee, Department>(sql, (department, employee) =>
-                    {
-                        department.Employees.Add(employee);
-                        return department;
-                    }, splitOn: "Id");
+                var department = await _logicBusiness.GetOneById(id);
+                return Ok(department);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-                    return Ok(result);
-                }
+        [HttpPost]
+        public async Task<IActionResult> AddOne([FromBody] DepartmentModel mDepartment)
+        {
+            try
+            {
+                await _logicBusiness.AddOne(mDepartment);
+                return Ok("Create new department successful.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOne(string id)
+        {
+            try
+            {
+                await _logicBusiness.DeleteOne(id);
+                return Ok("Remove department successful.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOne([FromBody] DepartmentModel mDepartment)
+        {
+            try
+            {
+                await _logicBusiness.UpdateOne(mDepartment);
+                return Ok("Update success.");
             }
             catch (Exception ex)
             {

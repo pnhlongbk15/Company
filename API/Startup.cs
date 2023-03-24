@@ -28,7 +28,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
-            services.AddControllers();
+            services.AddControllers();//x => x.Filters.Add<ApiKeyAuthFilter>()
             services.AddOptions();
             services.AddCors(configs =>
             {
@@ -160,7 +160,7 @@ namespace API
                 app.UseSwaggerUI();
             }
             app.UseCors(configs => configs.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
+            //app.UseMiddleware<ApiKeyAuthMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

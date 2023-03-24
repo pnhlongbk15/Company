@@ -1,5 +1,8 @@
-﻿using Business.Models;
+﻿using AutoMapper;
+using Business.Models;
 using Business.Repositories.Interfaces;
+using Data.Domain;
+using Data.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -8,11 +11,15 @@ namespace API.Controllers
     [Route("api/[controller]/[action]")]
     public class EmployeeController : ControllerBase
     {
-        public EmployeeController(ILogic<EmployeeModel> logicBusiness)
+        public EmployeeController(ILogic<EmployeeModel> logicBusiness, CompanyContext context, IMapper mapper)
         {
             _logicBusiness = logicBusiness;
+            _context = context;
+            _mapper = mapper;
         }
         private readonly ILogic<EmployeeModel> _logicBusiness;
+        private readonly CompanyContext _context;
+        private readonly IMapper _mapper;
 
         [HttpGet]
         public async Task<IActionResult> GetAllEmployee()
@@ -44,11 +51,11 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddOne([FromBody] EmployeeModel mEmployee)
+        public async Task<IActionResult> AddOne([FromBody] EmployeeModel mEmployee)
         {
             try
             {
-                _logicBusiness.AddOne(mEmployee);
+                await _logicBusiness.AddOne(mEmployee);
                 return Ok("Create new employee successful.");
             }
             catch (Exception ex)
@@ -57,12 +64,28 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteOne(string id)
+        [HttpPost]
+        public async Task<IActionResult> AddOneByProceduce([FromBody] EmployeeModel mEmployee)
         {
             try
             {
-                _logicBusiness.DeleteOne(id);
+                mEmployee.Id = Guid.NewGuid().ToString();
+
+                _context.Employees.Add(_mapper.Map<Employee>(mEmployee));
+                return Ok(_context.SaveChanges());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOne(string id)
+        {
+            try
+            {
+                await _logicBusiness.DeleteOne(id);
                 return Ok("Remove employee successful.");
             }
             catch (Exception ex)
@@ -72,11 +95,11 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateOne(string id, [FromBody] EmployeeModel mEmployee)
+        public async Task<IActionResult> UpdateOne([FromBody] EmployeeModel mEmployee)
         {
             try
             {
-                _logicBusiness.UpdateOne(id, mEmployee);
+                await _logicBusiness.UpdateOne(mEmployee);
                 return Ok("Update success.");
             }
             catch (Exception ex)

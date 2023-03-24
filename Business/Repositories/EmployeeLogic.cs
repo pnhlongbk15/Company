@@ -48,12 +48,12 @@ namespace Business.Repositories
             }
         }
 
-        public void AddOne(EmployeeModel model)
+        public async Task AddOne(EmployeeModel model)
         {
             try
             {
                 var eEmployee = _mapper.Map<Employee>(model);
-                _service.AddOne(eEmployee);
+                await _service.AddOne(eEmployee);
             }
             catch (Exception ex)
             {
@@ -61,33 +61,35 @@ namespace Business.Repositories
             }
         }
 
-        public void DeleteOne(string id)
-        {
-            try
-            {
-                var eEmployee = _service.GetOneById(id);
-                if (eEmployee == null)
-                {
-                    throw new Exception("Employee doesn't exist.");
-                }
-                _service.DeleteOne(_mapper.Map<Employee>(eEmployee));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async void UpdateOne(string id, EmployeeModel model)
+        public async Task DeleteOne(string id)
         {
             try
             {
                 var eEmployee = await _service.GetOneById(id);
                 if (eEmployee == null)
                 {
+                    throw new Exception("Employee doesn't exist.");
+                }
+                await _service.DeleteOne(eEmployee);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task UpdateOne(EmployeeModel model)
+        {
+            try
+            {
+                /*
+                var eEmployee = await _service.GetOneById(id);
+                if (eEmployee == null)
+                {
                     throw new Exception("The Employee record couldn't be found.");
                 }
-                _service.UpdateOne(eEmployee, _mapper.Map<Employee>(model));
+                */
+                await _service.UpdateOne(_mapper.Map<Employee>(model));
             }
             catch (Exception ex)
             {
