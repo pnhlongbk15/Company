@@ -80,7 +80,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteOne(string Email, string DepartmentName)
         {
             try
@@ -94,7 +94,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateOne([FromBody] EmployeeModel mEmployee)
         {
             try

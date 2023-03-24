@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(CompanyContext))]
-    [Migration("20230322093333_db.V1.Department")]
-    partial class dbV1Department
+    [Migration("20230324141007_db.V0.Identity.SeedData.Store")]
+    partial class dbV0IdentitySeedDataStore
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,12 +43,12 @@ namespace API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "23fafa8d-1975-4963-8ac7-754d7ac6446e",
+                            Id = "283feb4b-8278-4b21-ae9b-b233b6191237",
                             Name = "IT"
                         },
                         new
                         {
-                            Id = "2f626d4b-ac66-489a-b952-f8ad7a7963b8",
+                            Id = "c1b3594b-51ad-4dba-b78c-105558e2a117",
                             Name = "Sale"
                         });
                 });
@@ -96,9 +96,9 @@ namespace API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f019fa5c-13df-4fb9-92bc-acccee13f77b",
+                            Id = "4b6c0166-e444-48aa-a33a-6338954d8bbc",
                             DateOfBirth = new DateTime(1979, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = "23fafa8d-1975-4963-8ac7-754d7ac6446e",
+                            DepartmentId = "283feb4b-8278-4b21-ae9b-b233b6191237",
                             Email = "uncle.bob@gmail.com",
                             FirstName = "Uncle",
                             LastName = "Bob",
@@ -106,9 +106,9 @@ namespace API.Migrations
                         },
                         new
                         {
-                            Id = "17a67111-b8ac-4c15-9f0d-f173882b6250",
+                            Id = "e48e3499-b63b-430f-aa92-ac3fcb180e90",
                             DateOfBirth = new DateTime(1981, 7, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = "2f626d4b-ac66-489a-b952-f8ad7a7963b8",
+                            DepartmentId = "c1b3594b-51ad-4dba-b78c-105558e2a117",
                             Email = "jan.kirsten@gmail.com",
                             FirstName = "Jan",
                             LastName = "Kirsten",
@@ -218,13 +218,13 @@ namespace API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5ce52853-d3b0-40f5-a92a-e7b9b929249d",
+                            Id = "c8b877ea-8cc3-4786-969f-60daa98f0b08",
                             Name = "Visitor",
                             NormalizedName = "VISITOR"
                         },
                         new
                         {
-                            Id = "a79a6d25-9f5c-429a-9c39-dd1c9ceaf922",
+                            Id = "b63c2782-fd09-4073-91b1-24ee4e03c134",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

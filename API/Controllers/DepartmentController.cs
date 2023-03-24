@@ -70,7 +70,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateOne([FromBody] DepartmentModel mDepartment)
         {
             try
