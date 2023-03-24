@@ -96,5 +96,17 @@ namespace Business.Repositories
                 throw ex;
             }
         }
+
+        public async Task DeleteOneByProcedure(string email, string departmentName)
+        {
+            try
+            {
+                await _service.DeleteOneByProcedure(email, departmentName);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

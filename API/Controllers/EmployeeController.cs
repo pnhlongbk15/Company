@@ -81,11 +81,11 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOne(string id)
+        public async Task<IActionResult> DeleteOne(string Email, string DepartmentName)
         {
             try
             {
-                await _logicBusiness.DeleteOne(id);
+                await _logicBusiness.DeleteOneByProcedure(Email, DepartmentName);
                 return Ok("Remove employee successful.");
             }
             catch (Exception ex)

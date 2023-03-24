@@ -7,5 +7,6 @@
         Task AddOne(TModel model);
         Task UpdateOne(TModel model);
         Task DeleteOne(string id);
+        Task DeleteOneByProcedure(string email, string departmentName);
     }
 }

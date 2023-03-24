@@ -5,6 +5,8 @@ using Data.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using static Dapper.SqlMapper;
+
 
 namespace Data.Services
 {
@@ -22,6 +24,7 @@ namespace Data.Services
         {
             try
             {
+                /*
                 var sql = @"SELECT d.Id, d.Name, e.FirstName, e.LastName, e.Email 
                         FROM Departments as d
                         INNER JOIN Employees as e
@@ -34,6 +37,30 @@ namespace Data.Services
                 }, splitOn: "FirstName");
 
                 return departments;
+                */
+                var sql = @"SELECT Id, Name FROM Departments ;
+                            SELECT * FROM Employees;
+                            ";
+
+                using (var reader = await _connection.QueryMultipleAsync(sql))
+                {
+                    var departments = await reader.ReadAsync<Department>();
+                    var employees = await reader.ReadAsync<Employee>();
+                    var result = departments.GroupJoin(employees, outer => outer.Id, inner => inner.DepartmentId, (outer, inner) => new { outer, inner });
+
+                    var aDepartment = new List<Department>();
+                    foreach (var r in result)
+                    {
+                        Department department = r.outer;
+                        foreach (var e in r.inner)
+                        {
+                            department.Employees.Add(e);
+                        }
+                        aDepartment.Add(department);
+                    }
+                    return aDepartment;
+                };
+
             }
             catch (Exception ex)
             {
@@ -45,6 +72,7 @@ namespace Data.Services
         {
             try
             {
+
                 var sql = @"SELECT Id, Name FROM Departments WHERE Id = @id;
                             SELECT * FROM Employees WHERE DepartmentId = @id;
                             ";
@@ -102,6 +130,11 @@ namespace Data.Services
             {
                 throw ex;
             }
+        }
+
+        public Task DeleteOneByProcedure(string email, string departmentName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

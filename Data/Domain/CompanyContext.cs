@@ -64,11 +64,7 @@ namespace Data.Domain
                 DepartmentId = Id2,
             });
 
-            modelBuilder.Entity<Employee>().InsertUsingStoredProcedure("Employees_Insert", buildAction =>
-            {
 
-
-            });
             modelBuilder.Entity<Employee>(buildEntity =>
             {
                 buildEntity.InsertUsingStoredProcedure("Employees_Insert", buildAction =>
@@ -91,6 +87,12 @@ namespace Data.Domain
                             .HasParameter("Email")
                             .HasParameter("DepartmentId", b => b.HasName("DepartmentName"));
                 });
+
+            });
+            modelBuilder.Entity<Department>(buildEntity =>
+            {
+                buildEntity.InsertUsingStoredProcedure("Departments_Insert", b => b.HasParameter("Id").HasParameter("Name"));
+                buildEntity.UpdateUsingStoredProcedure("Departments_Update", b => b.HasOriginalValueParameter("Id").HasParameter("Name"));
             });
         }
     }

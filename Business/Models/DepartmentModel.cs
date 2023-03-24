@@ -4,6 +4,8 @@
     {
         public string? Id { get; set; }
         public string Name { get; set; }
-        public List<EmployeeModel> Employees { get; set; }
+
+        private List<EmployeeModel> employees = new List<EmployeeModel>();
+        public List<EmployeeModel> Employees { get { return employees; } }
     }
 }

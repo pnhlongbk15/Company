@@ -27,5 +27,16 @@
                                                                  WHERE Id=@Id
                                         END
                                         GO";
+        public readonly static string Delete = @"CREATE PROCEDURE Employees_Delete 
+                                                        @Email nvarchar(max), @DepartmentName nvarchar(max)
+                                        AS
+                                        BEGIN
+                                                DECLARE @DepartmentId nvarchar(max)
+                                                SELECT @DepartmentId = Id FROM Departments WHERE Name = @DepartmentName
+
+                                                DELETE FROM Employees  
+                                                       WHERE Email = @Email AND DepartmentId = @DepartmentId
+                                        END
+                                        GO";
     }
 }

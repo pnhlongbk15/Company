@@ -20,6 +20,7 @@ namespace Business.Repositories
             try
             {
                 var departments = await _service.GetAll();
+
                 return _mapper.Map<IEnumerable<DepartmentModel>>(departments);
             }
             catch (Exception ex)
@@ -92,6 +93,11 @@ namespace Business.Repositories
             {
                 throw ex;
             }
+        }
+
+        public Task DeleteOneByProcedure(string email, string departmentName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

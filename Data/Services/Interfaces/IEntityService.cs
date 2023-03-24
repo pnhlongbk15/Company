@@ -7,5 +7,6 @@
         Task AddOne(TEntity entity);
         Task UpdateOne(TEntity entity);
         Task DeleteOne(TEntity entity);
+        Task DeleteOneByProcedure(string email, string departmentName);
     }
 }
