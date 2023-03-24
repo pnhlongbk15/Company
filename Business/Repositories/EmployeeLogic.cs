@@ -3,25 +3,48 @@ using Business.Models;
 using Business.Repositories.Interfaces;
 using Data.Domain.Entities;
 using Data.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Business.Repositories
 {
     public class EmployeeLogic : ILogic<EmployeeModel>
     {
-        public EmployeeLogic(IEntityService<Employee> service, IMapper mapper)
+        public EmployeeLogic(IEntityService<Employee> service, IMapper mapper, IMemoryCache cache)
         {
             _mapper = mapper;
             _service = service;
         }
+        private readonly IMemoryCache _cache;
         private IEntityService<Employee> _service;
         private IMapper _mapper;
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         public async Task<IEnumerable<EmployeeModel>> GetAll()
         {
             try
             {
-                var aEmployeee = await _service.GetAll();
-                return _mapper.Map<IEnumerable<EmployeeModel>>(aEmployeee);
+                if (_cache.TryGetValue<IEnumerable<EmployeeModel>>("getAllEmployee", out var employees))
+                {
+                    return employees;
+                }
+                else
+                {
+                    try
+                    {
+                        await semaphore.WaitAsync();
+                        if (_cache.TryGetValue("getAllEmployee", out employees))
+                        {
+                            return employees;
+                        }
+                        employees = _mapper.Map<IEnumerable<EmployeeModel>>(await _service.GetAll());
+                        _cache.Set("getAllEmployee", employees);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                    return employees;
+                }
             }
             catch (Exception ex)
             {
@@ -33,14 +56,22 @@ namespace Business.Repositories
         {
             try
             {
-                var eEmployee = await _service.GetOneById(id);
-                if (eEmployee == null)
+                if (_cache.TryGetValue<IEnumerable<EmployeeModel>>("getAllEmployee", out var employees))
+                {
+                    var employee = employees.Single(x => x.Id == id);
+                    if (employee != null)
+                    {
+                        return employee;
+                    }
+                }
+
+                var result = await _service.GetOneById(id);
+                if (result == null)
                 {
                     throw new Exception("Invalid Id");
                 }
-                var employee = _mapper.Map<EmployeeModel>(eEmployee);
 
-                return employee;
+                return _mapper.Map<EmployeeModel>(result);
             }
             catch (Exception ex)
             {
@@ -54,6 +85,7 @@ namespace Business.Repositories
             {
                 var eEmployee = _mapper.Map<Employee>(model);
                 await _service.AddOne(eEmployee);
+                _cache.Remove("getAllEmployee");
             }
             catch (Exception ex)
             {
@@ -71,6 +103,7 @@ namespace Business.Repositories
                     throw new Exception("Employee doesn't exist.");
                 }
                 await _service.DeleteOne(eEmployee);
+                _cache.Remove("getAllEmployee");
             }
             catch (Exception ex)
             {
@@ -90,6 +123,7 @@ namespace Business.Repositories
                 }
                 */
                 await _service.UpdateOne(_mapper.Map<Employee>(model));
+                _cache.Remove("getAllEmployee");
             }
             catch (Exception ex)
             {
@@ -102,6 +136,7 @@ namespace Business.Repositories
             try
             {
                 await _service.DeleteOneByProcedure(email, departmentName);
+                _cache.Remove("getAllEmployee");
             }
             catch (Exception ex)
             {
