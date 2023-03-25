@@ -1,4 +1,5 @@
-﻿using Business.Configuration;
+﻿using API.Authentication;
+using Business.Configuration;
 using Business.Models;
 using Business.Repositories;
 using Business.Repositories.Interfaces;
@@ -28,7 +29,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
-            services.AddControllers();
+            services.AddControllers(x => x.Filters.Add<ApiKeyAuthFilter>());
             services.AddOptions();
             services.AddCors(configs =>
             {
@@ -43,10 +44,12 @@ namespace API
             });
 
             // DA
-            services.AddTransient<IEntityService<Employee>, EmployeeService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IEntityService<Department>, DepartmentService>();
+            services.AddTransient<IEntityService<Employee>, EmployeeService>();
             // BL
             services.AddTransient<IAccountLogic, AccountLogic>();
+            services.AddTransient<ILogic<DepartmentModel>, DepartmentLogic>();
             services.AddTransient<ILogic<EmployeeModel>, EmployeeLogic>();
 
             services.AddMemoryCache(setup =>
@@ -145,6 +148,8 @@ namespace API
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailService>();
 
+            // Dapper
+
         }
 
 
@@ -156,7 +161,7 @@ namespace API
                 app.UseSwaggerUI();
             }
             app.UseCors(configs => configs.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
+            //app.UseMiddleware<ApiKeyAuthMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(CompanyContext))]
-    [Migration("20230322041455_db.V0.Identity")]
-    partial class dbV0Identity
+    [Migration("20230324141007_db.V0.Identity.SeedData.Store")]
+    partial class dbV0IdentitySeedDataStore
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,34 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Data.Domain.Entities.Department", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "283feb4b-8278-4b21-ae9b-b233b6191237",
+                            Name = "IT"
+                        },
+                        new
+                        {
+                            Id = "c1b3594b-51ad-4dba-b78c-105558e2a117",
+                            Name = "Sale"
+                        });
+                });
+
             modelBuilder.Entity("Data.Domain.Entities.Employee", b =>
                 {
                     b.Property<string>("Id")
@@ -33,6 +61,11 @@ namespace API.Migrations
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DepartmentId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -56,13 +89,16 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepartmentId");
+
                     b.ToTable("Employees");
 
                     b.HasData(
                         new
                         {
-                            Id = "c94d6eec-94aa-4c51-b6d3-6c54db4ab89f",
+                            Id = "4b6c0166-e444-48aa-a33a-6338954d8bbc",
                             DateOfBirth = new DateTime(1979, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DepartmentId = "283feb4b-8278-4b21-ae9b-b233b6191237",
                             Email = "uncle.bob@gmail.com",
                             FirstName = "Uncle",
                             LastName = "Bob",
@@ -70,8 +106,9 @@ namespace API.Migrations
                         },
                         new
                         {
-                            Id = "abc96609-1907-4c31-b9aa-6386fe7b8ec5",
+                            Id = "e48e3499-b63b-430f-aa92-ac3fcb180e90",
                             DateOfBirth = new DateTime(1981, 7, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DepartmentId = "c1b3594b-51ad-4dba-b78c-105558e2a117",
                             Email = "jan.kirsten@gmail.com",
                             FirstName = "Jan",
                             LastName = "Kirsten",
@@ -181,13 +218,13 @@ namespace API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "bfd5b911-427b-41ca-8338-431408820e52",
+                            Id = "c8b877ea-8cc3-4786-969f-60daa98f0b08",
                             Name = "Visitor",
                             NormalizedName = "VISITOR"
                         },
                         new
                         {
-                            Id = "7921d379-01f0-4bb8-9888-3796e5049261",
+                            Id = "b63c2782-fd09-4073-91b1-24ee4e03c134",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -299,6 +336,17 @@ namespace API.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Domain.Entities.Employee", b =>
+                {
+                    b.HasOne("Data.Domain.Entities.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -348,6 +396,11 @@ namespace API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Data.Domain.Entities.Department", b =>
+                {
+                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }

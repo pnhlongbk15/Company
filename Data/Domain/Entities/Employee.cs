@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Domain.Entities
 {
@@ -17,7 +18,7 @@ namespace Data.Domain.Entities
         public string LastName { get; set; }
 
         [Required]
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
@@ -27,5 +28,16 @@ namespace Data.Domain.Entities
         [Required]
         [StringLength(255)]
         public string Email { get; set; }
+
+        [StringLength(255)]
+        public string DepartmentId { get; set; }
+        [Required]
+        [Column("DepartmentId")]
+        public Department Department { get; set; }
+
+        [NotMapped]
+        [StringLength(255)]
+        public string? DepartmentName { get; set; }
+
     }
 }

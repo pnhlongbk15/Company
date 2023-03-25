@@ -2,10 +2,11 @@
 {
     public interface IEntityService<TEntity>
     {
-        IEnumerable<TEntity> GetAll();
-        TEntity GetOneById(string id);
-        void AddOne(TEntity entity);
-        void UpdateOne(TEntity mEntity, TEntity entity);
-        void DeleteOne(TEntity entity);
+        Task<IEnumerable<TEntity>> GetAll();
+        Task<TEntity> GetOneById(string id);
+        Task AddOne(TEntity entity);
+        Task UpdateOne(TEntity entity);
+        Task DeleteOne(TEntity entity);
+        Task DeleteOneByProcedure(string email, string departmentName);
     }
 }
