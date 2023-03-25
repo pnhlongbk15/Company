@@ -46,19 +46,13 @@ namespace Data.Services
                 {
                     var departments = await reader.ReadAsync<Department>();
                     var employees = await reader.ReadAsync<Employee>();
-                    var result = departments.GroupJoin(employees, outer => outer.Id, inner => inner.DepartmentId, (outer, inner) => new { outer, inner });
-
-                    var aDepartment = new List<Department>();
-                    foreach (var r in result)
+                    var result = departments.GroupJoin(employees, outer => outer.Id, inner => inner.DepartmentId, (outer, inner) =>
                     {
-                        Department department = r.outer;
-                        foreach (var e in r.inner)
-                        {
-                            department.Employees.Add(e);
-                        }
-                        aDepartment.Add(department);
-                    }
-                    return aDepartment;
+                        outer.Employees.AddRange(inner);
+                        return outer;
+                    });
+
+                    return result;
                 };
 
             }
@@ -80,8 +74,8 @@ namespace Data.Services
                 {
                     var department = await result.ReadFirstAsync<Department>();
                     var employee = await result.ReadAsync<Employee>();
-                    employee.ToList().ForEach(e => department.Employees.Add(e));
-
+                    //employee.ToList().ForEach(e => department.Employees.Add(e));
+                    department.Employees.AddRange(employee);
                     return department;
                 };
             }

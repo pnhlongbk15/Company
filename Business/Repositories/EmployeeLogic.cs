@@ -13,6 +13,7 @@ namespace Business.Repositories
         {
             _mapper = mapper;
             _service = service;
+            _cache = cache;
         }
         private readonly IMemoryCache _cache;
         private IEntityService<Employee> _service;

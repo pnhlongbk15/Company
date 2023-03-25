@@ -18,7 +18,8 @@ namespace Business_Logic_Layer.Configuration
             // employee
             CreateMap<EmployeeModel, Employee>()
                 .ForMember(m => m.DepartmentId, opt => opt.MapFrom(x => x.DepartmentName));
-            CreateMap<Employee, EmployeeModel>();
+            CreateMap<Employee, EmployeeModel>()
+                .ForMember(e => e.DepartmentName, opt => opt.MapFrom(x => x.DepartmentId));
             CreateMap<Department, DepartmentModel>().ReverseMap();
 
         }

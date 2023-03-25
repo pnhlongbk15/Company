@@ -23,7 +23,21 @@ namespace Data.Services
         {
             try
             {
-                return _context.Employees.AsNoTracking().ToList();
+
+                var sql = @"SELECT e.Id, e.FirstName, e.LastName, e.Email, d.Name
+                        FROM Employees as e
+                        INNER JOIN Departments as d
+                        ON e.DepartmentId = d.Id";
+
+                var employees = await _connection.QueryAsync<Employee, Department, Employee>(sql, (employee, department) =>
+                {
+                    employee.DepartmentId = department.Name;
+                    return employee;
+                }, splitOn: "Name");
+
+                return employees;
+
+                //return _context.Employees.AsNoTracking().ToList();
             }
             catch (Exception ex) { throw ex; }
         }
