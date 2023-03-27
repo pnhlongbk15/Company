@@ -92,6 +92,8 @@ namespace Business.Repositories
             try
             {
                 var user = _mapper.Map<User>(mRegistration);
+                user.TwoFactorEnabled = true;
+
                 var token = await _service.RegisterAsync(user);
                 var confirmUrl = FactoryUrl(token, user.Email);
 

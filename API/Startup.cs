@@ -1,5 +1,4 @@
-﻿using API.Authentication;
-using Business.Configuration;
+﻿using Business.Configuration;
 using Business.Models;
 using Business.Repositories;
 using Business.Repositories.Interfaces;
@@ -29,7 +28,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
-            services.AddControllers(x => x.Filters.Add<ApiKeyAuthFilter>());
+            services.AddControllers();//x => x.Filters.Add<ApiKeyAuthFilter>()
             services.AddOptions();
             services.AddCors(configs =>
             {
