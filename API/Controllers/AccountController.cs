@@ -70,10 +70,19 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
-            return Ok(token);
-
+            try
+            {
+                if (token == null || email == null)
+                {
+                    return BadRequest("Invalid email confirmation url.");
+                }
+                _logicBusiness.ConfirmEmailAsync(token, email);
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
-
     }
 }

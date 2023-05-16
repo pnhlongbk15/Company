@@ -99,6 +99,7 @@ namespace API.Controllers
         {
             try
             {
+                Console.WriteLine(mEmployee.Id);
                 await _logicBusiness.UpdateOne(mEmployee);
                 return Ok("Update success.");
             }

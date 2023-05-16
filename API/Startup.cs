@@ -4,6 +4,7 @@ using Business.Repositories;
 using Business.Repositories.Interfaces;
 using Business.Services;
 using Business_Logic_Layer.Configuration;
+using Data;
 using Data.Domain;
 using Data.Domain.Entities;
 using Data.Services;
@@ -13,6 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -30,10 +33,13 @@ namespace API
             services.AddSwaggerGen();
             services.AddControllers();//x => x.Filters.Add<ApiKeyAuthFilter>()
             services.AddOptions();
+            //services.AddHttpContextAccessor();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddCors(configs =>
             {
                 configs.AddPolicy(
-                    "AllowOrigin",
+                    "AllowAllOrigins",
                     options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
                 );
             });
@@ -43,14 +49,15 @@ namespace API
             });
 
             // DA
-            services.AddTransient<IAccountService, AccountService>();
-            services.AddTransient<IEntityService<Department>, DepartmentService>();
-            services.AddTransient<IEntityService<Employee>, EmployeeService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IEntityService<Department>, DepartmentService>();
+            services.AddScoped<IEntityService<Employee>, EmployeeService>();
             // BL
-            services.AddTransient<IAccountLogic, AccountLogic>();
-            services.AddTransient<ILogic<DepartmentModel>, DepartmentLogic>();
-            services.AddTransient<ILogic<EmployeeModel>, EmployeeLogic>();
+            services.AddScoped<IAccountLogic, AccountLogic>();
+            services.AddScoped<ILogic<DepartmentModel>, DepartmentLogic>();
+            services.AddScoped<ILogic<EmployeeModel>, EmployeeLogic>();
 
+            
             services.AddMemoryCache(setup =>
             {
                 //setup.SizeLimit = 1000;
@@ -58,10 +65,21 @@ namespace API
             });
 
             // Database
-            services.AddDbContext<DbContext, CompanyContext>(options =>
+
+            services.AddDbContextPool<CompanyContext>(options =>
             {
+                Console.WriteLine("initial company");
+                //var connection = options.GetRequiredService<IHttpContextAccessor>().HttpContext.Request.Headers["Individual-Code"];
                 options.UseSqlServer(_configuration.GetConnectionString("Company"), b => b.MigrationsAssembly("API"));
             });
+            services.AddDbContextPool<Company1Context>(options => 
+            {
+                Console.WriteLine("Initial company1");
+                options.UseSqlServer(_configuration.GetConnectionString("Company1"), b => b.MigrationsAssembly("API"));
+            });
+            
+            services.AddScoped<MultiContext>();
+
             // Identity
             services
                 .AddIdentity<User, IdentityRole>()
@@ -159,7 +177,8 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseCors(configs => configs.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            //app.UseCors(configs => configs.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors("AllowAllOrigins");
             //app.UseMiddleware<ApiKeyAuthMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
